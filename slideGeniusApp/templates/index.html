@@ -3,9 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>PowerPoint Presentation</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: stretch;
+            height: 100vh;
+            margin: 0;
+        }
+        .presentation-area {
+            flex: 1;
+            border: 1px solid #ccc;
+            margin-right: 20px;
+            padding: 20px;
+        }
+        .chat-area {
+            width: 300px;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .chat-input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello!</h1>
+    <div class="presentation-area">
+        <!-- PowerPoint Presentation UI -->
+        
+        <h2>PowerPoint Presentation</h2>
+        <p>This is where the PowerPoint presentation will be displayed.</p>
+    </div>
+    <div class="chat-area">
+        <h2>Chat Area</h2>
+        <!-- Chat Input -->
+        <input type="text" class="chat-input" placeholder="Enter your topic...">
+        <!-- Chat Messages -->
+        <div class="chat-messages">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <!-- JavaScript for handling chat functionality -->
+    <script>
+        function sendMessage() {
+            var inputElement = document.querySelector('.chat-input');
+            var message = inputElement.value;
+            var messagesElement = document.querySelector('.chat-messages');
+            
+            // Append new message to chat messages
+            var newMessageElement = document.createElement('div');
+            newMessageElement.textContent = message;
+            messagesElement.appendChild(newMessageElement);
+            
+            // Clear input field
+            inputElement.value = '';
+        }
+    </script>
 </body>
 </html>

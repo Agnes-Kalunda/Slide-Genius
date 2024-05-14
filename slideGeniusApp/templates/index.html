@@ -16,6 +16,7 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             overflow: hidden;
+            position: relative; /* Ensure absolute positioning is relative to this container */
         }
         .presentation-frame {
             width: 100%;
@@ -36,7 +37,7 @@
                         <div class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4 max-w-xs">ChatGPT: {{ chatgpt_response }}</div>
                     </div>
                     
-                     <!-- User Input -->
+                    <!-- User Input -->
                     <div class="flex items-start mb-2">
                         <div class="bg-green-500 text-white rounded-lg py-2 px-4 max-w-xs ml-auto">You: {{ user_input }}</div>
                     </div>
@@ -47,13 +48,18 @@
                 </div>
             </div>
         </div>
-        <div class="presentation-area flex-1 p-8">
+        <div class="presentation-area flex-1 p-8 relative">
             <!-- PowerPoint Presentation -->
-            <div class="max-w-3xl mx-auto bg-white rounded shadow-md h-full">
+            <div class="max-w-3xl mx-auto bg-white rounded shadow-md h-full relative">
                 <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">PowerPoint Presentation</h2>
                 <div class="p-4 presentation-frame">
                     <!-- Display PowerPoint Presentation -->
                     <iframe src="{{ presentation_file_path }}" class="w-full h-full" frameborder="0"></iframe>
+                </div>
+                <!-- Next and Previous Buttons -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Previous</button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Next</button>
                 </div>
             </div>
         </div>

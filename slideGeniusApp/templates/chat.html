@@ -33,20 +33,13 @@
             <!-- Chat Area -->
             <div class="bg-white rounded shadow-md flex-1 flex flex-col">
                 <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">Chat Area</h2>
-                <div class="p-4 flex-1 overflow-auto">
-                    <!-- ChatGPT response -->
-                    <div class="flex items-start mb-2">
-                        <div class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4 max-w-xs">ChatGPT: {{ chatgpt_response }}</div>
-                    </div>
-                    
-                    <!-- User Input -->
-                    <div class="flex items-start mb-2">
-                        <div class="bg-green-500 text-white rounded-lg py-2 px-4 max-w-xs ml-auto">You: {{ user_input }}</div>
-                    </div>
+                <div id="chat-messages" class="p-4 flex-1 overflow-auto">
+                    <!-- ChatGPT response and User Input will be dynamically added here -->
                 </div>
                 <!-- Chat Input -->
                 <div class="p-4">
-                    <input type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Type your message...">
+                    <input type="text" id="chat-input" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Type your message...">
+                    <button id="send-button" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Send</button>
                 </div>
             </div>
         </div>
@@ -56,9 +49,7 @@
                 <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">PowerPoint Presentation</h2>
                 <div class="p-4 presentation-frame">
                     <!-- Display PowerPoint Presentation -->
-                    {% if presentation_file_path %}
                     <iframe src="{{ presentation_file_path }}" class="w-full h-full" frameborder="0"></iframe>
-                    {% endif%}
                 </div>
                 <!-- Next and Previous Buttons -->
                 <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
@@ -68,5 +59,36 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('send-button').addEventListener('click', function () {
+            const inputField = document.getElementById('chat-input');
+            const userMessage = inputField.value;
+            if (userMessage.trim()) {
+                fetch('{% url "chat" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: new URLSearchParams({
+                        'message': userMessage
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const chatMessages = document.getElementById('chat-messages');
+                    chatMessages.innerHTML += `
+                        <div class="flex items-start mb-2">
+                            <div class="bg-green-500 text-white rounded-lg py-2 px-4 max-w-xs ml-auto">You: ${data.user_input}</div>
+                        </div>
+                        <div class="flex items-start mb-2">
+                            <div class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4 max-w-xs">ChatGPT: ${data.chatgpt_response}</div>
+                        </div>
+                    `;
+                    inputField.value = '';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

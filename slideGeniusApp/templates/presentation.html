@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideGenius Presentation</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .presentation-area {
+            height: 80vh;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .presentation-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="presentation-area bg-white rounded shadow-md w-full max-w-5xl">
+        <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">PowerPoint Presentation</h2>
+        <div class="p-4 presentation-frame">
+            <!-- Display PowerPoint Presentation -->
+            <iframe src="{{ presentation_file_path }}" class="w-full h-full" frameborder="0"></iframe>
+        </div>
+        <!-- Next and Previous Buttons -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Previous</button>
+            <span>{{ current_slide }}/{{ num_slides }}</span>
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Next</button>
+        </div>
+    </div>
+</body>
+</html>

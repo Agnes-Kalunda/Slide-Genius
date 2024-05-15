@@ -23,3 +23,20 @@ def chat_view(request) :
             'chatgpt_response': chatgpt_response
         })
     return render(request, "chat.html")
+
+
+def create_presentation(request):
+    if request.method == 'POST':
+        topic = request.POST.get ('topic')
+        num_slides = int(request.POST.get('num_slides', 3))
+
+
+        #calling chatgpt api with the topic provided for the slides
+        response = openai.completion.create(
+            engine ='',
+            prompt=f"Create a presentation on {topic} with {num_slides} slides.",
+            max_tokens = 500
+        )
+
+        slide_content = response.choices[0].text.strip()
+    return render ( request, "presentation.html")

@@ -8,15 +8,17 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .chat-area {
-            max-width: 400px; 
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
         }
         .presentation-area {
             flex: 1;
-            height: 80vh; 
+            height: 80vh;
             border: 1px solid #ccc;
             border-radius: 8px;
             overflow: hidden;
-            position: relative; /* Ensure absolute positioning is relative to this container */
+            position: relative;
         }
         .presentation-frame {
             width: 100%;
@@ -29,9 +31,9 @@
     <div class="flex h-screen">
         <div class="chat-area p-4">
             <!-- Chat Area -->
-            <div class="max-w-md mx-auto bg-white rounded shadow-md">
+            <div class="bg-white rounded shadow-md flex-1 flex flex-col">
                 <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">Chat Area</h2>
-                <div class="p-4">
+                <div class="p-4 flex-1 overflow-auto">
                     <!-- ChatGPT response -->
                     <div class="flex items-start mb-2">
                         <div class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4 max-w-xs">ChatGPT: {{ chatgpt_response }}</div>
@@ -41,10 +43,10 @@
                     <div class="flex items-start mb-2">
                         <div class="bg-green-500 text-white rounded-lg py-2 px-4 max-w-xs ml-auto">You: {{ user_input }}</div>
                     </div>
-                    <!-- Chat Input -->
-                    <div class="max-w-md mx-auto mt-8">
-                        <input type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Type your message...">
-                    </div>
+                </div>
+                <!-- Chat Input -->
+                <div class="p-4">
+                    <input type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500" placeholder="Type your message...">
                 </div>
             </div>
         </div>

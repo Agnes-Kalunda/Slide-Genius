@@ -61,20 +61,10 @@
                     {% endif%}
                 </div>
                 <!-- Next and Previous Buttons -->
-                <!-- Next and Previous Buttons -->
-<div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
-    <form action="{% url 'next_slide' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="current_slide" value="{{ current_slide }}">
-        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Previous</button>
-    </form>
-    <form action="{% url 'previous_slide' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="current_slide" value="{{ current_slide }}">
-        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Next</button>
-    </form>
-</div>
-
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Previous</button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none">Next</button>
+                </div>
             </div>
         </div>
     </div>

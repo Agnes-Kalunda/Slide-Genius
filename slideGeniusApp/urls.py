@@ -1,8 +1,7 @@
 from django.urls import path
-from .views import *
+from . import views
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('next/', next_slide, name='next_slide'),
-    path('previous/', previous_slide, name='previous_slide'),
+    path('', views.chat_view, name='chat_view'),
+
 ]

@@ -22,7 +22,8 @@ def chat_view(request):
                     response = openai.Completion.create(
                         engine="gpt-3.5-turbo",
                         prompt=f"Create a summary presentation about '{topic}' consisting of {num_slides} slides.",
-                        max_tokens=1000
+                        max_tokens=1000,
+                        temperature=0.1
                     )
                     chatgpt_response = response.choices[0].text.strip()
                     request.session.pop('topic', None)  # Clear the topic

@@ -68,5 +68,76 @@
             </div>
         </div>
     </div>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.querySelector("input[type='text']");
+            const chatArea = document.querySelector(".chat-area .overflow-auto");
+        
+            // Function to add messages to the chat area
+            function addMessage(content, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = "flex items-start mb-2";
+                if (isUser) {
+                    messageDiv.innerHTML = `<div class="bg-green-500 text-white rounded-lg py-2 px-4 max-w-xs ml-auto">You: ${content}</div>`;
+                } else {
+                    messageDiv.innerHTML = `<div class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4 max-w-xs">ChatGPT: ${content}</div>`;
+                }
+                chatArea.appendChild(messageDiv);
+            }
+        
+            input.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    let message = input.value;
+                    input.value = '';
+        
+                    // Display user message in the chat area
+                    addMessage(message, true);
+        
+                    // Send data to Django backend
+                    fetch("/chat/", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': getCookie('csrftoken')  
+                        },
+                        body: `message=${encodeURIComponent(message)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            addMessage(data.error, false);
+                        } else {
+                            
+                            addMessage(data.chatgpt_response, false);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        addMessage('Error communicating with the server.', false);
+                    });
+                }
+            });
+        
+            
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+        </script>
+        
 </body>
 </html>

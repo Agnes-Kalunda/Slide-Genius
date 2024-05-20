@@ -9,14 +9,11 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .chat-area {
-            max-width: 400px;
             display: flex;
             flex-direction: column;
         }
 
         .presentation-area {
-            flex: 1;
-            height: 80vh;
             border: 1px solid #ccc;
             border-radius: 8px;
             overflow: hidden;
@@ -28,26 +25,39 @@
             height: 100%;
             border: none;
         }
+
+        @media (max-width: 1024px) {
+            .flex-responsive {
+                flex-direction: column;
+            }
+
+            .half-screen {
+                width: 100%;
+                height: 50vh;
+                overflow: hidden;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-gray-100">
-    <div class="flex flex-col lg:flex-row h-screen">
-        <div class="chat-area p-4 lg:w-1/3 w-full">
+    <div class="flex h-screen lg:flex-row flex-responsive">
+        <div class="chat-area lg:w-1/2 w-full lg:h-full h-1/2 p-4 half-screen">
             <!-- Chat Area -->
             <div class="bg-white rounded shadow-md flex flex-col h-full">
                 <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">Chat Area</h2>
-                <div class="p-4 flex-1 overflow-hidden" id="chat-messages">
+                <div class="p-4 flex-1 overflow-auto" id="chat-messages">
                     <!-- ChatGPT response -->
                 </div>
                 <!-- Chat Input -->
                 <div class="p-4">
-                    <input type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+                    <input type="text"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
                         placeholder="Type your message..." id="chat-input">
                 </div>
             </div>
         </div>
-        <div class="presentation-area flex-1 p-4 lg:p-8 relative">
+        <div class="presentation-area lg:w-1/2 w-full lg:h-full h-1/2 p-4 lg:p-8 half-screen relative">
             <!-- PowerPoint Presentation -->
             <div class="max-w-3xl mx-auto bg-white rounded shadow-md h-full relative">
                 <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">PowerPoint Presentation</h2>
@@ -67,6 +77,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const input = document.getElementById('chat-input');
             const chatArea = document.getElementById('chat-messages');
+            let messages = [];  // Array to store all messages
 
             function addMessage(content, isUser) {
                 const messageDiv = document.createElement('div');
@@ -77,12 +88,20 @@
                     messageDiv.innerHTML = `<div class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4 max-w-xs">ChatGPT: ${content}</div>`;
                 }
 
-                if (chatArea.children.length >= 20) {
-                    chatArea.removeChild(chatArea.firstChild);
+                // Append the message to the chat area
+                chatArea.appendChild(messageDiv);
+
+                // Store the message in the array
+                messages.push(messageDiv);
+
+                // If more than 50 messages, remove the oldest one
+                if (messages.length > 50) {
+                    chatArea.removeChild(messages[0]);
+                    messages.shift();
                 }
 
-                chatArea.appendChild(messageDiv);
-                chatArea.scrollTop = chatArea.scrollHeight; // Scroll to the bottom
+                // Scroll to the bottom
+                chatArea.scrollTop = chatArea.scrollHeight;
             }
 
             // Automatically display the initial ChatGPT message
@@ -126,7 +145,7 @@
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
                     const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
+                    for (let i = 0; cookies.length > i; i++) {
                         const cookie = cookies[i].trim();
                         if (cookie.substring(0, name.length + 1) === (name + '=')) {
                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));

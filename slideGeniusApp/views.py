@@ -16,7 +16,7 @@ def generate_presentation(topic, num_slides):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"Create a summary presentation about '{topic}' consisting of {num_slides} slides with titles and bullet points."}
             ],
-            max_tokens=1000,
+            max_tokens=600,
             temperature=0.1
         )
         slides_content = response.choices[0].message['content'].strip().split('\n\n')
@@ -30,19 +30,19 @@ def generate_presentation(topic, num_slides):
             os.makedirs(media_dir)
 
         # Load a font
-        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  # Update this path to where your font is located
+        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  
         title_font = ImageFont.truetype(font_path, 40)  # Increase font size for title
         content_font = ImageFont.truetype(font_path, 30)  # Increase font size for content
 
         slide_image_paths = []
 
-        # Define different styles for content titles
+    
         title_styles = [
             {'title_color': (255, 0, 0)},  # Red
             {'title_color': (0, 0, 255)},  # Blue
             {'title_color': (0, 128, 0)},  # Green
             {'title_color': (255, 165, 0)},  # Orange
-            # Add more styles as needed
+
         ]
 
         for i, slide_content in enumerate(slides_content):
@@ -55,12 +55,12 @@ def generate_presentation(topic, num_slides):
                 content_frame = content_placeholder.text_frame
                 p = content_frame.add_paragraph()
                 p.text = title.strip()
-                p.level = 0  # This makes it a bullet point
+                p.level = 0  # bullets
 
                 for line in content.strip().split('\n'):
                     p = content_frame.add_paragraph()
                     p.text = line.strip()
-                    p.level = 0  # This makes it a bullet point
+                    p.level = 0  
 
                 # Apply content title styles
                 title_style = title_styles[i % len(title_styles)]
@@ -93,7 +93,7 @@ def chat_view(request):
             return JsonResponse({'chatgpt_response': f"How many slides would you like for the topic: '{user_input}'?"})
         else:
             topic = request.session['topic']
-            if user_input.isdigit() and 1 <= int(user_input) <= 20:
+            if user_input.isdigit() and 1 <= int(user_input) <= 5:
                 num_slides = int(user_input)
                 try:
                     slide_image_paths = generate_presentation(topic, num_slides)

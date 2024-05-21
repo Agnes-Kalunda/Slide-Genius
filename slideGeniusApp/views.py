@@ -3,26 +3,29 @@ from django.http import JsonResponse
 import os
 import openai
 from pptx import Presentation
-from pptx.util import Inches
 from django.conf import settings
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def generate_presentation(topic, num_slides):
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=f"Create a summary presentation about '{topic}' consisting of {num_slides} slides.",
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Create a summary presentation about '{topic}' consisting of {num_slides} slides."}
+        ],
         max_tokens=1000,
         temperature=0.1
     )
-    slides_content = response.choices[0].text.strip().split('\n')
+    slides_content = response.choices[0].message['content'].strip().split('\n')
 
     prs = Presentation()
     for slide_content in slides_content:
-        slide = prs.slides.add_slide(prs.slide_layouts[1])
-        title, content = slide_content.split(':', 1)
-        slide.shapes.title.text = title.strip()
-        slide.placeholders[1].text = content.strip()
+        if ':' in slide_content:
+            title, content = slide_content.split(':', 1)
+            slide = prs.slides.add_slide(prs.slide_layouts[1])
+            slide.shapes.title.text = title.strip()
+            slide.placeholders[1].text = content.strip()
 
     file_path = os.path.join(settings.MEDIA_ROOT, f"{topic}_presentation.pptx")
     prs.save(file_path)

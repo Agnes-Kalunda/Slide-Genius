@@ -14,22 +14,15 @@ def generate_presentation(topic, num_slides):
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Create a summary presentation about '{topic}' consisting of {num_slides} slides."}
+                {"role": "user", "content": f"Create a summary presentation about '{topic}' consisting of {num_slides} slides with titles and bullet points."}
             ],
             max_tokens=1000,
             temperature=0.1
         )
-        slides_content = response.choices[0].message['content'].strip().split('\n')
+        slides_content = response.choices[0].message['content'].strip().split('\n\n')
 
         prs = Presentation()
         slide_layout = prs.slide_layouts[1]
-
-        for slide_content in slides_content:
-            if ':' in slide_content:
-                title, content = slide_content.split(':', 1)
-                slide = prs.slides.add_slide(slide_layout)
-                slide.shapes.title.text = title.strip()
-                slide.placeholders[1].text = content.strip()
 
         # Ensure the media directory exists
         media_dir = settings.MEDIA_ROOT
@@ -41,18 +34,48 @@ def generate_presentation(topic, num_slides):
         title_font = ImageFont.truetype(font_path, 40)  # Increase font size for title
         content_font = ImageFont.truetype(font_path, 30)  # Increase font size for content
 
-        # Convert slides to images
         slide_image_paths = []
-        for i, slide in enumerate(prs.slides):
-            image_path = os.path.join(media_dir, f"{topic}_slide_{i + 1}.png")
 
-            # Create a blank image
-            img = Image.new('RGB', (800, 600), color=(255, 255, 255))
-            d = ImageDraw.Draw(img)
-            d.text((10, 10), slide.shapes.title.text, font=title_font, fill=(0, 0, 0))
-            d.text((10, 100), slide.placeholders[1].text, font=content_font, fill=(0, 0, 0))
-            img.save(image_path)
-            slide_image_paths.append(image_path.replace(settings.MEDIA_ROOT, '').lstrip('/'))
+        # Define different styles for content titles
+        title_styles = [
+            {'title_color': (255, 0, 0)},  # Red
+            {'title_color': (0, 0, 255)},  # Blue
+            {'title_color': (0, 128, 0)},  # Green
+            {'title_color': (255, 165, 0)},  # Orange
+            # Add more styles as needed
+        ]
+
+        for i, slide_content in enumerate(slides_content):
+            if ':' in slide_content:
+                title, content = slide_content.split(':', 1)
+                slide = prs.slides.add_slide(slide_layout)
+                slide.shapes.title.text = f"Slide {i + 1}"
+
+                content_placeholder = slide.placeholders[1]
+                content_frame = content_placeholder.text_frame
+                p = content_frame.add_paragraph()
+                p.text = title.strip()
+                p.level = 0  # This makes it a bullet point
+
+                for line in content.strip().split('\n'):
+                    p = content_frame.add_paragraph()
+                    p.text = line.strip()
+                    p.level = 0  # This makes it a bullet point
+
+                # Apply content title styles
+                title_style = title_styles[i % len(title_styles)]
+                image_path = os.path.join(media_dir, f"{topic}_slide_{i + 1}.png")
+                img = Image.new('RGB', (800, 600), color=(255, 255, 255))  # White background
+                d = ImageDraw.Draw(img)
+                d.text((10, 10), title.strip(), font=title_font, fill=title_style['title_color'])
+
+                y_position = 100
+                for line in content.strip().split('\n'):
+                    d.text((10, y_position), f"- {line.strip()}", font=content_font, fill=(0, 0, 0))
+                    y_position += 40  # Adjust line height
+
+                img.save(image_path)
+                slide_image_paths.append(image_path.replace(settings.MEDIA_ROOT, '').lstrip('/'))
 
         return slide_image_paths
     except Exception as e:

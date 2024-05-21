@@ -1,11 +1,10 @@
 import os
 import openai
 from pptx import Presentation
-from pptx.util import Inches
 from django.conf import settings
 from django.shortcuts import render
 from django.http import JsonResponse
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
@@ -37,9 +36,10 @@ def generate_presentation(topic, num_slides):
         if not os.path.exists(media_dir):
             os.makedirs(media_dir)
 
-        # Save the presentation
-        pptx_path = os.path.join(media_dir, f"{topic}_presentation.pptx")
-        prs.save(pptx_path)
+        # Load a font
+        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  # Update this path to where your font is located
+        title_font = ImageFont.truetype(font_path, 40)  # Increase font size for title
+        content_font = ImageFont.truetype(font_path, 30)  # Increase font size for content
 
         # Convert slides to images
         slide_image_paths = []
@@ -49,8 +49,8 @@ def generate_presentation(topic, num_slides):
             # Create a blank image
             img = Image.new('RGB', (800, 600), color=(255, 255, 255))
             d = ImageDraw.Draw(img)
-            d.text((10, 10), slide.shapes.title.text, fill=(0, 0, 0))
-            d.text((10, 50), slide.placeholders[1].text, fill=(0, 0, 0))
+            d.text((10, 10), slide.shapes.title.text, font=title_font, fill=(0, 0, 0))
+            d.text((10, 100), slide.placeholders[1].text, font=content_font, fill=(0, 0, 0))
             img.save(image_path)
             slide_image_paths.append(image_path.replace(settings.MEDIA_ROOT, '').lstrip('/'))
 

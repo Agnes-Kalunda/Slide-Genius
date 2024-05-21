@@ -14,7 +14,7 @@ def generate_presentation(topic, num_slides):
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Create a summary presentation about '{topic}' consisting of {num_slides} slides with titles and bullet points."}
+                {"role": "user", "content": f"Create a summary presentation about '{topic}' consisting of {num_slides} slides with titles and bullet points for just the content."}
             ],
             max_tokens=600,
             temperature=0.1
@@ -32,7 +32,7 @@ def generate_presentation(topic, num_slides):
         # Load a font
         font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  
         title_font = ImageFont.truetype(font_path, 40)  # Increase font size for title
-        content_font = ImageFont.truetype(font_path, 30)  # Increase font size for content
+        content_font = ImageFont.truetype(font_path, 20)  # Increase font size for content
 
         slide_image_paths = []
 

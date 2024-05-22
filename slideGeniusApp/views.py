@@ -115,7 +115,7 @@ def chat_view(request):
                 try:
                     slide_image_paths = generate_presentation(topic, num_slides)
                     request.session.pop('topic')
-                    return JsonResponse({'chatgpt_response': f"Here is your presentation on '{topic}' ", 'slide_image_paths': slide_image_paths})
+                    return JsonResponse({'chatgpt_response': f"Here is your presentation on '{topic}' . Provide a new topic if you want a different presentation. ", 'slide_image_paths': slide_image_paths})
                 except Exception as e:
                     return JsonResponse({'error': f'Failed to generate presentation: {str(e)}'})
             else:

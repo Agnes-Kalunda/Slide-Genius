@@ -1,6 +1,7 @@
 import os
 import openai
 from pptx import Presentation
+from pptx.util import Inches, Pt
 from django.conf import settings
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -30,19 +31,17 @@ def generate_presentation(topic, num_slides):
             os.makedirs(media_dir)
 
         # Load a font
-        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  
+        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         title_font = ImageFont.truetype(font_path, 40)  # Increase font size for title
         content_font = ImageFont.truetype(font_path, 20)  # Increase font size for content
 
         slide_image_paths = []
 
-    
         title_styles = [
             {'title_color': (255, 0, 0)},  # Red
             {'title_color': (0, 0, 255)},  # Blue
             {'title_color': (0, 128, 0)},  # Green
             {'title_color': (255, 165, 0)},  # Orange
-
         ]
 
         for i, slide_content in enumerate(slides_content):
@@ -53,16 +52,31 @@ def generate_presentation(topic, num_slides):
 
                 content_placeholder = slide.placeholders[1]
                 content_frame = content_placeholder.text_frame
+                content_frame.word_wrap = True  # Enable word wrap
+
                 p = content_frame.add_paragraph()
                 p.text = title.strip()
-                p.level = 0  # bullets
+                p.font.bold = True  # Bold the title
+                p.font.size = Pt(24)  # Adjust title font size
+                p.level = 0
 
                 for line in content.strip().split('\n'):
                     p = content_frame.add_paragraph()
                     p.text = line.strip()
-                    p.level = 0  
+                    p.font.size = Pt(18)  # Adjust content font size
+                    p.level = 1  # Indent bullet points
 
-                # Apply content title styles
+                #  text frame size
+                left = Inches(1)
+                top = Inches(1.5)
+                width = Inches(8.5)
+                height = Inches(5)
+                content_placeholder.width = width
+                content_placeholder.height = height
+                content_placeholder.left = left
+                content_placeholder.top = top
+
+                # title styles
                 title_style = title_styles[i % len(title_styles)]
                 image_path = os.path.join(media_dir, f"{topic}_slide_{i + 1}.png")
                 img = Image.new('RGB', (800, 600), color=(255, 255, 255))  # White background
@@ -76,6 +90,9 @@ def generate_presentation(topic, num_slides):
 
                 img.save(image_path)
                 slide_image_paths.append(image_path.replace(settings.MEDIA_ROOT, '').lstrip('/'))
+
+        prs_path = os.path.join(media_dir, f"{topic}.pptx")
+        prs.save(prs_path)
 
         return slide_image_paths
     except Exception as e:
@@ -93,12 +110,12 @@ def chat_view(request):
             return JsonResponse({'chatgpt_response': f"How many slides would you like for the topic: '{user_input}'?"})
         else:
             topic = request.session['topic']
-            if user_input.isdigit() and 1 <= int(user_input) <= 5:
+            if user_input.isdigit() and 1 <= int(user_input) <= 20:
                 num_slides = int(user_input)
                 try:
                     slide_image_paths = generate_presentation(topic, num_slides)
                     request.session.pop('topic')
-                    return JsonResponse({'chatgpt_response': f"Here is your presentation on '{topic}'", 'slide_image_paths': slide_image_paths})
+                    return JsonResponse({'chatgpt_response': f"Here is your presentation on '{topic}' ", 'slide_image_paths': slide_image_paths})
                 except Exception as e:
                     return JsonResponse({'error': f'Failed to generate presentation: {str(e)}'})
             else:

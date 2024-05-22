@@ -52,10 +52,11 @@
                 <!-- Chat Input -->
                 <div class="p-4">
                     <form id="chat-form">
-                        {% csrf_token %}
+                        <!-- Include a CSRF token -->
                         <input type="text"
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
                             placeholder="Type your message..." id="chat-input">
+                        <button type="submit" style="display:none;"></button>
                     </form>
                 </div>
             </div>
@@ -103,7 +104,7 @@
 
             function displaySlide(index) {
                 if (slideImagePaths.length > 0 && index >= 0 && index < slideImagePaths.length) {
-                    presentationFrame.innerHTML = `<img src="/media/${slideImagePaths[index]}" class="w-full h-full" />`;
+                    presentationFrame.innerHTML = `<img src="${slideImagePaths[index]}" class="w-full h-full" />`;
                 }
             }
 
@@ -132,7 +133,7 @@
                     } else {
                         addMessage(data.chatgpt_response, false);
                         if (data.slide_image_paths) {
-                            slideImagePaths = data.slide_image_paths;
+                            slideImagePaths = data.slide_image_paths.map(path => `/media/${path}`);
                             slideIndex = 0;
                             displaySlide(slideIndex);
                         }

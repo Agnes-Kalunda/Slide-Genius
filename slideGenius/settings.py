@@ -79,8 +79,7 @@ WSGI_APPLICATION = 'slideGenius.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+# Comment out or remove the following DATABASES configuration
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',

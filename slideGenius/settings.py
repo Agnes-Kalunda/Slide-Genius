@@ -43,12 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'slideGeniusApp',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -57,7 +59,16 @@ MIDDLEWARE = [
     
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "https://slide-genius-5.onrender.com",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'slideGenius.urls'
+
 
 TEMPLATES = [
     {
